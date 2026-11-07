@@ -1,6 +1,6 @@
 
 html { font-size: calc(100vh / 10.52); -webkit-text-size-adjust: 100%; }
-html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; left: 0; top: 0; right: 0; bottom: 0; }
 body {
   font-size: .2rem; 
   background: #101113;
@@ -12,7 +12,7 @@ body {
 
 @font-face { font-family: "PetDigitsTall"; font-weight: 500; src: url("assets/fonts/oswald-digits-500.woff2") format("woff2"); }
 @font-face { font-family: "PetDateCN"; font-weight: 500; src: url("assets/fonts/notosanssc-date-500.woff2") format("woff2"); }
-.app { position: relative; width: 100%; height: 100%; overflow: hidden; }
+.app { position: fixed; left: 0; top: 0; right: 0; bottom: 0; width: 100%; height: 100%; overflow: hidden; }
 .pg { position: absolute; top: 0; width: 100%; height: 100%; overflow: hidden; }
 .bg, .ui { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ui { pointer-events: none; }
@@ -21,10 +21,12 @@ body {
 .glow { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1.2s ease; }
 .glow.on { opacity: 1; }
 .clock-wrap { display: none; position: absolute; pointer-events: none; }
-html.landscape .clock-wrap.l { display: block; left: .15rem; width: 66%; top: .3rem; bottom: .3rem; }
+/* 没量到横竖屏之前也先画出横屏表盘。车机卡片几乎都是横屏；竖屏类加上后再换成竖屏表盘 */
+.clock-wrap.l { display: block; left: .15rem; width: 66%; top: .3rem; bottom: .3rem; }
+html.portrait .clock-wrap.l { display: none; }
 html.portrait .clock-wrap.p { display: block; left: 0; width: 100%; top: 0; height: 100%; }
 .clock-box { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); overflow: hidden; }
-html.landscape .clock-box { transform: translate(-50%, -25%); }
+.clock-wrap.l .clock-box { transform: translate(-50%, -25%); }
 .clock-wrap.p .clock-box { top: 0; transform: translate(-50%, 0); }
 .clock-box .dialframe {
   position: absolute; display: block; pointer-events: none; -webkit-user-drag: none;

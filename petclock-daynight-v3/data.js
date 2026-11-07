@@ -2,6 +2,7 @@
 (function () {
   'use strict';
   var api = window.uiplus || null;
+  function host() { return window.uiplus || null; }
   var FIELDS = [
     'power.level', 'driving.gear', 'driving.speed', 'display.dayNightMode',
     'energy.batteryPercent', 'energy.fuelPercent', 'energy.electricRange', 'energy.fuelRange', 'energy.chargingState',
@@ -64,7 +65,7 @@
   // 续航：宿主没数据时报 2046（插混没油、纯电车的燃油续航都是），当成没有，不然总续航会多出 2000 多公里
   var RANGE = { 'energy.electricRange': 1, 'energy.fuelRange': 1 }, RANGE_BAD = 2046;
 
-  var car = {}, units = {}, tree = {}, sys = {}, stree = {}, media = null, carFns = [], mediaFns = [], sysFns = [], handles = [], gen = 0, caps = null, fields = FIELDS, retryTimer = null, tries = 0;
+  var car = {}, units = {}, tree = {}, sys = {}, stree = {}, media = null, carFns = [], mediaFns = [], sysFns = [], handles = [], gen = 0, caps = null, fields = FIELDS, retryTimer = null, tries = 0, hostWait = 0;
   var want = { car: false, media: false }, extra = [];
   function emitCar() { carFns.slice().forEach(function (f) { f(car); }); }
   function emitSys() { sysFns.slice().forEach(function (f) { f(sys); }); }
@@ -148,25 +149,44 @@
     clearTimeout(retryTimer);
     retryTimer = setTimeout(start, 1000 * Math.pow(2, tries));
   }
+  function asPromise(v) { return v && typeof v.then === 'function' ? v : Promise.resolve(v); }
   function start() {
     stop();
-    if (!api || (!want.car && !want.media)) return;
-    var g = gen;
-    var ready = caps ? Promise.resolve() : api.getCapabilities().then(function (c) {
-      caps = {};
-      ((c && c.fields) || []).forEach(function (f) { if (f && f.name) caps[f.name] = f.subscriptionMode || 'native'; });
-    });
+    api = host();
+    if (!want.car && !want.media) return;
+    /* 真宿主经常在页面脚本之后才把 uiplus 注进来。注进来之前先等，不要抛异常把卡片弄挂 */
+    if (!api) {
+      if (hostWait < 30) { hostWait++; retryTimer = setTimeout(start, 200); }
+      return;
+    }
+    hostWait = 0;
+    var g = gen, ready;
+    try {
+      if (caps || typeof api.getCapabilities !== 'function') ready = Promise.resolve();
+      else ready = asPromise(api.getCapabilities()).then(function (c) {
+        caps = {};
+        ((c && c.fields) || []).forEach(function (f) { if (f && f.name) caps[f.name] = f.subscriptionMode || 'native'; });
+      });
+    } catch (e) { ready = Promise.resolve(); }
     ready.then(function () {
       if (g !== gen) return;
+      api = host();
+      if (!api) return;
+      if (!caps) caps = {};
       fields = FIELDS.concat(extra.filter(function (k) { return FIELDS.indexOf(k) < 0; })).filter(function (k) { return caps[k] && caps[k] !== 'none'; }); // 订阅里有一个宿主没有的字段，整个订阅都会失败
-      if (want.car && fields.length) api.vehicle.subscribe(fields, function (ev) { if (g === gen) onVehicle(ev); }).then(function (h) { keep(h, g); }, function () { fail(g); });
-      if (want.car && api.system && typeof api.system.subscribe === 'function') api.system.subscribe(SYS, function (ev) { if (g === gen) onSys(ev); }).then(function (h) { keep(h, g); }, function () {}); // 系统数据订不上不影响车况
-      if (want.media) api.media.subscribe(function (ev) { if (g === gen) onMedia(ev); }).then(function (h) { keep(h, g); }, function () { fail(g); });
+      function sub(fn, onFail) {
+        var p;
+        try { p = fn(); } catch (e) { if (onFail) onFail(g); return; }
+        asPromise(p).then(function (h) { keep(h, g); }, function () { if (onFail) onFail(g); });
+      }
+      if (want.car && fields.length && api.vehicle && typeof api.vehicle.subscribe === 'function') sub(function () { return api.vehicle.subscribe(fields, function (ev) { if (g === gen) onVehicle(ev); }); }, fail);
+      if (want.car && api.system && typeof api.system.subscribe === 'function') sub(function () { return api.system.subscribe(SYS, function (ev) { if (g === gen) onSys(ev); }); }); // 系统数据订不上不影响车况
+      if (want.media && api.media && typeof api.media.subscribe === 'function') sub(function () { return api.media.subscribe(function (ev) { if (g === gen) onMedia(ev); }); }, fail);
     }, function () { fail(g); });
   }
 
   window.D3Data = {
-    demo: !!(api && api.__debug), // 调试宿主：车况页标"调试数据"，点了打开调试面板
+    demo: !!(host() && host().__debug), // 调试宿主：车况页标"调试数据"，点了打开调试面板
     car: function () { return car; },
     /** 这个字段同节点单位编码对应的单位名（电耗、油耗、旅程里程）；没有返回 '' */
     unit: function (k) { return units[k] || ''; },
@@ -193,8 +213,9 @@
       start();
     },
     /** 宿主有没有这个播放控制方法（2.1.1.12 起有 play / pause / previous / next） */
-    can: function (cmd) { return !!api && !!api.media && typeof api.media[cmd] === 'function'; },
+    can: function (cmd) { api = host(); return !!api && !!api.media && typeof api.media[cmd] === 'function'; },
     send: function (cmd) {
+      api = host();
       var m = api && api.media, p;
       if (!m || typeof m[cmd] !== 'function') return Promise.reject({ code: 'UNSUPPORTED' });
       try { p = m[cmd](); } catch (e) { p = Promise.reject(e); }
@@ -202,10 +223,13 @@
     },
     /** 整首歌词 [{ text, timeMs }]，拿不到返回空数组 */
     lyrics: function () {
+      api = host();
       if (!api || !api.media || typeof api.media.getLyrics !== 'function') return Promise.resolve([]);
-      return api.media.getLyrics().then(function (r) { return (r && media && r.trackId === media.trackId && r.lines) || []; }, function () { return []; });
+      var p;
+      try { p = api.media.getLyrics(); } catch (e) { return Promise.resolve([]); }
+      return asPromise(p).then(function (r) { return (r && media && r.trackId === media.trackId && r.lines) || []; }, function () { return []; });
     }
   };
 
-  if (api) window.addEventListener('pagehide', stop);
+  window.addEventListener('pagehide', stop);
 })();

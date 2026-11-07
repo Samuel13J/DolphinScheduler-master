@@ -86,6 +86,11 @@
   function fitClock() {
     fit($('clockWrapL'), $('clockBoxL'), 1824, 1312); /* 横屏参考 1824x1312 */
     fit($('clockWrapP'), $('clockBoxP'), 1248, 1792); /* 竖屏参考 1248x1792 */
+    var shown = portraitNow() ? $('clockWrapP') : $('clockWrapL');
+    if (shown && !shown.clientWidth && (fitClock.n || 0) < 40) {
+      fitClock.n = (fitClock.n || 0) + 1;
+      setTimeout(fitClock, 50);
+    }
   }
   function portraitNow() { return (' ' + doc.documentElement.className + ' ').indexOf(' portrait ') >= 0; }
 
