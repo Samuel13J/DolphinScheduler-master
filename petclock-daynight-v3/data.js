@@ -2,7 +2,6 @@
 (function () {
   'use strict';
   var api = window.uiplus || null;
-  function host() { return window.uiplus || null; }
   var FIELDS = [
     'power.level', 'driving.gear', 'driving.speed', 'display.dayNightMode',
     'energy.batteryPercent', 'energy.fuelPercent', 'energy.electricRange', 'energy.fuelRange', 'energy.chargingState',
@@ -65,8 +64,8 @@
   // 续航：宿主没数据时报 2046（插混没油、纯电车的燃油续航都是），当成没有，不然总续航会多出 2000 多公里
   var RANGE = { 'energy.electricRange': 1, 'energy.fuelRange': 1 }, RANGE_BAD = 2046;
 
-  var car = {}, units = {}, tree = {}, sys = {}, stree = {}, media = null, carFns = [], mediaFns = [], sysFns = [], handles = [], gen = 0, caps = null, fields = FIELDS, retryTimer = null, tries = 0, hostWait = 0;
-  var want = { car: false, media: false }, extra = [];
+  var car = {}, units = {}, tree = {}, sys = {}, stree = {}, media = null, carFns = [], mediaFns = [], sysFns = [], handles = [], gen = 0, caps = null, fields = FIELDS, retryTimer = null, tries = 0;
+  var want = { car: false, media: false }, extra = [], carOnly = null;
   function emitCar() { carFns.slice().forEach(function (f) { f(car); }); }
   function emitSys() { sysFns.slice().forEach(function (f) { f(sys); }); }
   function emitMedia() { mediaFns.slice().forEach(function (f) { f(media); }); }
@@ -149,44 +148,26 @@
     clearTimeout(retryTimer);
     retryTimer = setTimeout(start, 1000 * Math.pow(2, tries));
   }
-  function asPromise(v) { return v && typeof v.then === 'function' ? v : Promise.resolve(v); }
   function start() {
     stop();
-    api = host();
-    if (!want.car && !want.media) return;
-    /* 真宿主经常在页面脚本之后才把 uiplus 注进来。注进来之前先等，不要抛异常把卡片弄挂 */
-    if (!api) {
-      if (hostWait < 30) { hostWait++; retryTimer = setTimeout(start, 200); }
-      return;
-    }
-    hostWait = 0;
-    var g = gen, ready;
-    try {
-      if (caps || typeof api.getCapabilities !== 'function') ready = Promise.resolve();
-      else ready = asPromise(api.getCapabilities()).then(function (c) {
-        caps = {};
-        ((c && c.fields) || []).forEach(function (f) { if (f && f.name) caps[f.name] = f.subscriptionMode || 'native'; });
-      });
-    } catch (e) { ready = Promise.resolve(); }
+    if (!api || (!want.car && !want.media)) return;
+    var g = gen;
+    var ready = caps ? Promise.resolve() : api.getCapabilities().then(function (c) {
+      caps = {};
+      ((c && c.fields) || []).forEach(function (f) { if (f && f.name) caps[f.name] = f.subscriptionMode || 'native'; });
+    });
     ready.then(function () {
       if (g !== gen) return;
-      api = host();
-      if (!api) return;
-      if (!caps) caps = {};
-      fields = FIELDS.concat(extra.filter(function (k) { return FIELDS.indexOf(k) < 0; })).filter(function (k) { return caps[k] && caps[k] !== 'none'; }); // 订阅里有一个宿主没有的字段，整个订阅都会失败
-      function sub(fn, onFail) {
-        var p;
-        try { p = fn(); } catch (e) { if (onFail) onFail(g); return; }
-        asPromise(p).then(function (h) { keep(h, g); }, function () { if (onFail) onFail(g); });
-      }
-      if (want.car && fields.length && api.vehicle && typeof api.vehicle.subscribe === 'function') sub(function () { return api.vehicle.subscribe(fields, function (ev) { if (g === gen) onVehicle(ev); }); }, fail);
-      if (want.car && api.system && typeof api.system.subscribe === 'function') sub(function () { return api.system.subscribe(SYS, function (ev) { if (g === gen) onSys(ev); }); }); // 系统数据订不上不影响车况
-      if (want.media && api.media && typeof api.media.subscribe === 'function') sub(function () { return api.media.subscribe(function (ev) { if (g === gen) onMedia(ev); }); }, fail);
+      var base = carOnly || FIELDS;
+      fields = base.concat(extra.filter(function (k) { return base.indexOf(k) < 0; })).filter(function (k) { return caps[k] && caps[k] !== 'none'; }); // 订阅里有一个宿主没有的字段，整个订阅都会失败
+      if (want.car && fields.length) api.vehicle.subscribe(fields, function (ev) { if (g === gen) onVehicle(ev); }).then(function (h) { keep(h, g); }, function () { fail(g); });
+      if (want.car && !carOnly && api.system && typeof api.system.subscribe === 'function') api.system.subscribe(SYS, function (ev) { if (g === gen) onSys(ev); }).then(function (h) { keep(h, g); }, function () {}); // 系统数据订不上不影响车况。只订昼夜时不订系统字段
+      if (want.media) api.media.subscribe(function (ev) { if (g === gen) onMedia(ev); }).then(function (h) { keep(h, g); }, function () { fail(g); });
     }, function () { fail(g); });
   }
 
   window.D3Data = {
-    demo: !!(host() && host().__debug), // 调试宿主：车况页标"调试数据"，点了打开调试面板
+    demo: !!(api && api.__debug), // 调试宿主：车况页标"调试数据"，点了打开调试面板
     car: function () { return car; },
     /** 这个字段同节点单位编码对应的单位名（电耗、油耗、旅程里程）；没有返回 '' */
     unit: function (k) { return units[k] || ''; },
@@ -205,17 +186,18 @@
     /** 收车况 / 媒体变化，返回取消函数 */
     onCar: function (fn) { return listen(carFns, fn); },
     onMedia: function (fn) { return listen(mediaFns, fn); },
-    /** 只订阅这些：['car'] / ['media'] / []（相同就不动） */
-    use: function (list) {
+    /** 只订阅这些：['car'] / ['media'] / []。only 给出时车况只订这几个字段，不订整表，也不订系统字段 */
+    use: function (list, only) {
       var c = list.indexOf('car') >= 0, m = list.indexOf('media') >= 0;
-      if (c === want.car && m === want.media) return;
-      want.car = c; want.media = m;
+      var next = only && only.length ? only.slice().sort() : null;
+      var same = (next ? next.join() : '') === (carOnly ? carOnly.join() : '');
+      if (c === want.car && m === want.media && same) return;
+      want.car = c; want.media = m; carOnly = next;
       start();
     },
     /** 宿主有没有这个播放控制方法（2.1.1.12 起有 play / pause / previous / next） */
-    can: function (cmd) { api = host(); return !!api && !!api.media && typeof api.media[cmd] === 'function'; },
+    can: function (cmd) { return !!api && !!api.media && typeof api.media[cmd] === 'function'; },
     send: function (cmd) {
-      api = host();
       var m = api && api.media, p;
       if (!m || typeof m[cmd] !== 'function') return Promise.reject({ code: 'UNSUPPORTED' });
       try { p = m[cmd](); } catch (e) { p = Promise.reject(e); }
@@ -223,13 +205,10 @@
     },
     /** 整首歌词 [{ text, timeMs }]，拿不到返回空数组 */
     lyrics: function () {
-      api = host();
       if (!api || !api.media || typeof api.media.getLyrics !== 'function') return Promise.resolve([]);
-      var p;
-      try { p = api.media.getLyrics(); } catch (e) { return Promise.resolve([]); }
-      return asPromise(p).then(function (r) { return (r && media && r.trackId === media.trackId && r.lines) || []; }, function () { return []; });
+      return api.media.getLyrics().then(function (r) { return (r && media && r.trackId === media.trackId && r.lines) || []; }, function () { return []; });
     }
   };
 
-  window.addEventListener('pagehide', stop);
+  if (api) window.addEventListener('pagehide', stop);
 })();

@@ -86,11 +86,6 @@
   function fitClock() {
     fit($('clockWrapL'), $('clockBoxL'), 1824, 1312); /* 横屏参考 1824x1312 */
     fit($('clockWrapP'), $('clockBoxP'), 1248, 1792); /* 竖屏参考 1248x1792 */
-    var shown = portraitNow() ? $('clockWrapP') : $('clockWrapL');
-    if (shown && !shown.clientWidth && (fitClock.n || 0) < 40) {
-      fitClock.n = (fitClock.n || 0) + 1;
-      setTimeout(fitClock, 50);
-    }
   }
   function portraitNow() { return (' ' + doc.documentElement.className + ' ').indexOf(' portrait ') >= 0; }
 
@@ -429,7 +424,7 @@
   fitClock();
   clockTick();
   applyMode(isDay() ? 'day' : 'night');   // 先用本地时间兜底，等车机字段到达再以车机为准
-  D.use(['car', 'media']);                // 订阅车况，只为取 display.dayNightMode
+  D.use(['car', 'media'], ['display.dayNightMode']); // 只订昼夜这一个车况字段，不订整表
   D.onCar(function (c) { if (c) { applyMode(c['display.dayNightMode']); } });
   D.onMedia(onMedia);
   onMedia(D.media());

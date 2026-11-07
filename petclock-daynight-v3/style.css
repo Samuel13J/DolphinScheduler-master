@@ -1,6 +1,6 @@
 
 html { font-size: calc(100vh / 10.52); -webkit-text-size-adjust: 100%; }
-html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; left: 0; top: 0; right: 0; bottom: 0; }
+html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
 body {
   font-size: .2rem; 
   background: #101113;
@@ -12,7 +12,7 @@ body {
 
 @font-face { font-family: "PetDigitsTall"; font-weight: 500; src: url("assets/fonts/oswald-digits-500.woff2") format("woff2"); }
 @font-face { font-family: "PetDateCN"; font-weight: 500; src: url("assets/fonts/notosanssc-date-500.woff2") format("woff2"); }
-.app { position: fixed; left: 0; top: 0; right: 0; bottom: 0; width: 100%; height: 100%; overflow: hidden; }
+.app { position: relative; width: 100%; height: 100%; overflow: hidden; }
 .pg { position: absolute; top: 0; width: 100%; height: 100%; overflow: hidden; }
 .bg, .ui { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ui { pointer-events: none; }
@@ -21,12 +21,10 @@ body {
 .glow { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1.2s ease; }
 .glow.on { opacity: 1; }
 .clock-wrap { display: none; position: absolute; pointer-events: none; }
-/* 没量到横竖屏之前也先画出横屏表盘。车机卡片几乎都是横屏；竖屏类加上后再换成竖屏表盘 */
-.clock-wrap.l { display: block; left: .15rem; width: 66%; top: .3rem; bottom: .3rem; }
-html.portrait .clock-wrap.l { display: none; }
+html.landscape .clock-wrap.l { display: block; left: .15rem; width: 66%; top: .3rem; bottom: .3rem; }
 html.portrait .clock-wrap.p { display: block; left: 0; width: 100%; top: 0; height: 100%; }
 .clock-box { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); overflow: hidden; }
-.clock-wrap.l .clock-box { transform: translate(-50%, -25%); }
+html.landscape .clock-box { transform: translate(-50%, -25%); }
 .clock-wrap.p .clock-box { top: 0; transform: translate(-50%, 0); }
 .clock-box .dialframe {
   position: absolute; display: block; pointer-events: none; -webkit-user-drag: none;
@@ -52,10 +50,10 @@ html.portrait .clock-wrap.p { display: block; left: 0; width: 100%; top: 0; heig
 .v-state { display: flex; align-items: center; font-size: .2rem; color: var(--mute); letter-spacing: .1em; }
 .v-state::before { content: ""; width: .1rem; height: .1rem; margin-right: .1rem; border-radius: 50%; background: #ffb067; }
 .v-state.paused::before { background: rgba(245, 241, 234, .35); }
-.v-title { margin-top: .16rem; font-size: .56rem; font-weight: 700; line-height: 1.2; letter-spacing: .01em; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-.v-artist { margin-top: .1rem; font-size: .32rem; font-weight: 500; letter-spacing: .04em; color: var(--mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.v-title { margin-top: .16rem; font-size: .46rem; font-weight: 700; line-height: 1.22; letter-spacing: .01em; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.v-artist { margin-top: .1rem; font-size: .26rem; color: var(--mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.v-lyrics { position: absolute; left: 68%; right: .44rem; top: 3.52rem; bottom: 1.66rem; overflow: hidden;
+.v-lyrics { position: absolute; left: 68%; right: .44rem; top: 2.9rem; bottom: 1.66rem; overflow: hidden;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 18%, #000 70%, transparent 100%); }
 .v-ly { position: relative; padding-right: .3rem; transition: transform .6s cubic-bezier(.2, .8, .2, 1); will-change: transform; }
 .v-ly p { margin: 0 0 .18rem; font-size: .3rem; font-weight: 600; line-height: 1.4; color: var(--mute); opacity: .75; transform-origin: 0 50%;
@@ -77,17 +75,14 @@ html.portrait .clock-wrap.p { display: block; left: 0; width: 100%; top: 0; heig
 .pg-vinyl.empty .v-meta, .pg-vinyl.empty .v-lyrics, .pg-vinyl.empty .v-ctl { display: none; }
 
 
-.portrait .v-meta { left: .3rem; right: .3rem; top: 46.5%; bottom: auto; text-align: center; }
-.portrait .v-meta::before { content: ""; display: block; width: .34rem; height: .05rem; margin: 0 auto .15rem; border-radius: .03rem;
-  background: var(--hit, #a4662e); opacity: .55; }
+.portrait .v-meta { left: .3rem; right: .3rem; top: 51%; bottom: auto; text-align: center; }
 .portrait .v-state { justify-content: center; font-size: .18rem; }
-.portrait .v-title { margin-top: 0; font-size: .44rem; font-weight: 800; line-height: 1.24; letter-spacing: .01em; -webkit-line-clamp: 2; }
-.portrait .v-artist { margin-top: .14rem; font-size: .28rem; font-weight: 500; letter-spacing: .12em; opacity: .9; }
-.portrait .v-lyrics { left: .3rem; right: .3rem; top: 68.5%; bottom: 1.3rem; height: auto; text-align: center;
+.portrait .v-title { margin-top: .04rem; font-size: .26rem; -webkit-line-clamp: 1; }
+.portrait .v-artist { margin-top: .02rem; font-size: .25rem; }
+.portrait .v-lyrics { left: .3rem; right: .3rem; top: 62%; bottom: 1.3rem; height: auto; text-align: center;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 8%, #000 90%, transparent 100%); }
 .portrait .v-ly { padding: 0 .2rem; }
-.portrait .v-ly p { margin-bottom: .12rem; font-size: .23rem; font-weight: 500; opacity: .66; transform-origin: 50% 50%; }
-.portrait .v-ly p.on { font-weight: 700; opacity: 1; transform: scale(1.14); }
+.portrait .v-ly p { margin-bottom: .1rem; font-size: .26rem; transform-origin: 50% 50%; }
 .portrait .v-ctl { left: 0; right: 0; bottom: .3rem; justify-content: center; }
 .portrait .v-btn { margin: 0 .14rem; }
 .portrait .v-empty { left: 0; right: 0; top: auto; bottom: 1.3rem; text-align: center; }

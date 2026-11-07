@@ -59,7 +59,8 @@
 
   <div class="toast" id="toast"></div>
 </div>
-<!-- 车机入口不加载 debughost.js。那份脚本会在 window.uiplus 还没注入时自己装一个假宿主，真宿主就不再接入，卡片表现为打不开。电脑预览用 _preview.html。 -->
+<!-- 调试宿主（debughost.js）：电脑上没有车机宿主时装一个模拟的 uiplus（提供媒体数据、播放控制、歌词） -->
+<script src="debughost.js"></script>
 <script src="data.js"></script>
 <script src="card.js"></script>
 </body>
