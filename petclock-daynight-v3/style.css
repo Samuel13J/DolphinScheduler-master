@@ -202,11 +202,8 @@ html.day .v-ly p.on { text-shadow: 0 .02rem .12rem rgba(255, 255, 255, .65); }
 .glow.on { animation: glowDrift 46s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .glow.on { animation: none; } }
 
-/* 竖屏背景：表盘外一圈细环，四角几点星尘。压在光晕上面、时钟和文字下面 */
+/* 竖屏背景：四角几点星尘。压在光晕上面、时钟和文字下面 */
 .clock-wrap, .ui { z-index: 2; }
-html.portrait .pg-vinyl::before { content: ""; position: absolute; z-index: 1; left: 7%; top: 3.2%; width: 86%; height: 0; padding-bottom: 86%;
-  border-radius: 50%; border: 1px solid rgba(120, 86, 40, .2); pointer-events: none;
-  box-shadow: inset 0 0 0 1px rgba(255, 250, 240, .55), 0 0 0 .12rem rgba(255, 248, 236, .28); }
 html.portrait .pg-vinyl::after { content: ""; position: absolute; z-index: 1; left: 8%; top: 7%; width: .07rem; height: .07rem; border-radius: 50%;
   background: rgba(150, 108, 52, .55); pointer-events: none;
   box-shadow: 0 0 0 .05rem rgba(150, 108, 52, .15),
@@ -214,8 +211,6 @@ html.portrait .pg-vinyl::after { content: ""; position: absolute; z-index: 1; le
     2vw 58vh 0 -.02rem rgba(150, 108, 52, .28),
     78vw 64vh 0 -.02rem rgba(150, 108, 52, .26),
     46vw 92vh 0 -.025rem rgba(150, 108, 52, .22); }
-html.portrait.night .pg-vinyl::before { border-color: rgba(245, 236, 214, .22);
-  box-shadow: inset 0 0 0 1px rgba(245, 236, 214, .1), 0 0 0 .12rem rgba(245, 236, 214, .05); }
 html.portrait.night .pg-vinyl::after { background: rgba(245, 236, 214, .7);
   box-shadow: 0 0 0 .05rem rgba(245, 236, 214, .18),
     74vw .4rem 0 0 rgba(245, 236, 214, .45),
