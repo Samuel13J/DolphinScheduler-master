@@ -200,19 +200,9 @@ html.night.portrait .v-ly p.on { color: var(--hit, #f5f1ea); opacity: 1; }
 html.night.portrait .v-meta::after { opacity: .7; }
 html.day .v-ly p.on { text-shadow: 0 .02rem .12rem rgba(255, 255, 255, .65); }
 
-/* 指针和日期跟封面色，数字仍用深色 */
-html.day .clk .thour, html.day .clk .tmin { stroke: var(--hit-day, #a4662e); }
+/* 日期跟封面色，时针和分针保持原来的深色 / 夜间浅色 */
 html.day .clk .tdate { fill: var(--hit-day, #a4662e); }
-html.night .clk .thour, html.night .clk .tmin { stroke: var(--hit-night, #f5f1ea); }
 html.night .clk .tdate { fill: var(--hit-night, #f5f1ea); }
-/* 当前句背后一层淡色光 */
-.v-ly p.on { position: relative; }
-.v-ly p.on::before {
-  content: ""; position: absolute; z-index: -1; left: 50%; top: 50%; width: 4.6rem; height: .78rem;
-  margin-left: -2.3rem; margin-top: -.39rem; border-radius: .4rem; pointer-events: none;
-  background: radial-gradient(ellipse at 50% 50%, var(--hit, #a4662e) 0%, rgba(255, 253, 248, 0) 72%);
-  opacity: .42;
-}
 /* 竖屏进度条加粗、圆头、末端有光点 */
 .portrait .v-bar { height: .05rem; border-radius: .05rem; overflow: visible; }
 .v-bar i { position: relative; border-radius: .05rem; box-shadow: 0 0 .08rem var(--hit, #a4662e); }
