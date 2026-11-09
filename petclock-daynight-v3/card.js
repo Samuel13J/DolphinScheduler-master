@@ -2,11 +2,6 @@
 (function () {
   'use strict';
   var D = window.D3Data, doc = document;
-  /* 效果预览：?look=1 换歌淡入，2 进度光点呼吸，3 播放时收起状态行。车上不带参数，外观不变 */
-  (function () {
-    var m = /[?&]look=(1|2|3)(?:&|$)/.exec(location.search);
-    if (m) doc.documentElement.className += ' look' + m[1];
-  })();
   var $ = function (id) { return document.getElementById(id); };
   var el = $('pgVinyl');
 
@@ -152,7 +147,6 @@
   
   var swapT = 0;
   function fadeSwap() {
-    if ((' ' + doc.documentElement.className + ' ').indexOf(' look1 ') < 0) return;
     el.classList.remove('swap');
     void el.offsetWidth;
     el.classList.add('swap');

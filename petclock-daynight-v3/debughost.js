@@ -41,10 +41,7 @@
   function duration(i) { return TRACKS[i].lines.length * LINE + LINE; }
 
 
-  var q = location.search || '';
-  function qflag(name) { return new RegExp('[?&]' + name + '=1(?:&|$)').test(q); }
-  function qnum(name) { var m = new RegExp('[?&]' + name + '=(\\d+)').exec(q); return m ? parseInt(m[1], 10) : 0; }
-  var MP = { playing: qflag('play'), pos: qnum('at'), at: Date.now(), timer: 0 };
+  var MP = { playing: false, pos: 0, at: 0, timer: 0 };
   var track = 0, seq = 0;
   var subs = [], frame = 0;
   function pos() { return MP.playing ? Math.min(duration(track), MP.pos + Date.now() - MP.at) : MP.pos; }
@@ -89,10 +86,6 @@
   }
 
   
-  if (MP.playing) tick();
-  if (qflag('next')) setTimeout(function () { setTrack(track + 1, true); }, 2500);
-  if (qnum('pausein')) setTimeout(function () { setPlaying(false); }, qnum('pausein'));
-
   window.uiplus = {
     version: '1.0',
     __debug: true,
