@@ -365,6 +365,10 @@
       var spot = portrait ? 'ellipse 68% 32% at 50% 16%' : 'ellipse 40% 58% at 28% 40%';
       var iK = (dayInk || C).join(',');
       var layers = [
+        /* 竖屏：右上、左下两团淡色光斑，给纸底一点层次 */
+        portrait ? 'radial-gradient(circle at 88% 8%, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 16%)' : '',
+        portrait ? 'radial-gradient(circle at 6% 76%, rgba(' + DA.join(',') + ',.34) 0%, rgba(' + DA.join(',') + ',0) 24%)' : '',
+        portrait ? 'radial-gradient(circle at 94% 68%, rgba(' + DB.join(',') + ',.26) 0%, rgba(' + DB.join(',') + ',0) 20%)' : '',
         /* ① 顶部暖光聚光，托住表盘 */
         'radial-gradient(' + spot + ', rgba(255,255,255,.46) 0%, rgba(255,255,255,.12) 56%, rgba(255,255,255,0) 100%)',
         /* ② 中央通透保护层：让文字区回到纸感，避免被色雾糊住 */
@@ -383,12 +387,16 @@
         /* ⑦ 纸底 */
         'linear-gradient(' + (portrait ? '178deg' : '116deg') + ', #fffdfa 0%, var(--paper-1, #fbf8f1) 46%, var(--paper-2, #f2ece1) 100%)'
       ];
-      e.style.background = layers.join(',');
+      e.style.background = layers.filter(Boolean).join(',');
       return;
     }
     /* 夜间：封面模糊铺底 + 取色统一色调 + 深色压暗 + 取色氛围光 */
     var n1 = portrait ? '140% 72%' : '88% 118%', n2 = portrait ? '120% 68%' : '72% 96%';
     var g1 = rg(A, n1, p1, '.26', '.11'), g2 = rg(B, n2, p2, '.22', '.09');
+    var orbs = portrait
+      ? ('radial-gradient(circle at 86% 9%, rgba(' + A.join(',') + ',.22) 0%, rgba(' + A.join(',') + ',0) 16%),'
+        + 'radial-gradient(circle at 8% 80%, rgba(' + B.join(',') + ',.16) 0%, rgba(' + B.join(',') + ',0) 22%),')
+      : '';
     var dp = Dp.join(',');
     var veil = 'linear-gradient(' + (portrait ? '178deg' : '116deg') + ', rgba(' + dp + ',.66) 0%, rgba(' + dp + ',.36) 50%, rgba(' + dp + ',.68) 100%)';
     var dial = portrait ? 'ellipse 74% 30% at 50% 22%' : 'ellipse 44% 58% at 30% 40%';
@@ -397,8 +405,8 @@
       ? 'linear-gradient(180deg, rgba(9,8,7,.32) 0%, rgba(9,8,7,.5) 42%, rgba(8,7,6,.86) 74%, rgba(6,5,4,.94) 100%)'
       : 'linear-gradient(90deg, rgba(9,8,7,.32) 0%, rgba(9,8,7,.5) 44%, rgba(8,7,6,.84) 70%, rgba(6,5,4,.93) 100%)';
     e.style.background = bgUrl
-      ? (g1 + ',' + g2 + ',' + rim + ',' + veil + ',' + shade + ', url(' + bgUrl + ') center / cover no-repeat')
-      : (g1 + ',' + g2 + ',' + rim + ', linear-gradient(' + (portrait ? '170deg' : '110deg') + ', rgb(' + dp + ') 0%, #0a0908 70%, #070606 100%)');
+      ? (orbs + g1 + ',' + g2 + ',' + rim + ',' + veil + ',' + shade + ', url(' + bgUrl + ') center / cover no-repeat')
+      : (orbs + g1 + ',' + g2 + ',' + rim + ', linear-gradient(' + (portrait ? '170deg' : '110deg') + ', rgb(' + dp + ') 0%, #0a0908 70%, #070606 100%)');
   }
   function blurred(img) {
     try {
