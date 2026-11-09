@@ -75,17 +75,25 @@ html.landscape .clock-box { transform: translate(-50%, -25%); }
 .pg-vinyl.empty .v-meta, .pg-vinyl.empty .v-lyrics, .pg-vinyl.empty .v-ctl { display: none; }
 
 
-.portrait .v-meta { left: .36rem; right: .36rem; top: 49%; bottom: auto; text-align: center; }
+.portrait .v-meta { left: .28rem; right: .28rem; top: 48%; bottom: auto; text-align: center; padding: .14rem .2rem .16rem; border-radius: .28rem; background: rgba(255, 253, 248, .58); }
 .portrait .v-state { justify-content: center; font-size: .18rem; letter-spacing: .16em; }
-.portrait .v-title { margin-top: .1rem; font-size: .42rem; font-weight: 800; line-height: 1.16; letter-spacing: .03em; -webkit-line-clamp: 2; }
-.portrait .v-artist { margin-top: .1rem; font-size: .32rem; font-weight: 600; letter-spacing: .16em; color: var(--mute); }
-.portrait .v-meta::after { content: ""; display: block; width: 2.2rem; height: 1px; margin: .18rem auto 0;
+.portrait .v-title { margin-top: .08rem; font-size: .42rem; font-weight: 800; line-height: 1.16; letter-spacing: .03em; -webkit-line-clamp: 2; }
+.portrait .v-artist { margin-top: .08rem; font-size: .3rem; font-weight: 600; letter-spacing: .12em; color: var(--mute); }
+.v-cover { display: none; }
+.portrait .v-cover { display: block; width: .62rem; height: .62rem; margin: .12rem auto 0; border-radius: 50%; object-fit: cover; box-shadow: 0 .04rem .14rem rgba(60, 40, 20, .22); }
+.v-cover.off { display: none; }
+.portrait .v-meta::after { content: ""; display: block; width: 1.6rem; height: 1px; margin: .14rem auto 0;
   background: linear-gradient(90deg, transparent, var(--hit, #a4662e) 18%, var(--hit, #a4662e) 82%, transparent); }
-.portrait .v-lyrics { left: .4rem; right: .4rem; top: 65%; bottom: 1.28rem; height: auto; text-align: center;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 88%, transparent 100%); }
+.portrait .v-lyrics { left: .4rem; right: .4rem; top: 71%; bottom: 1.72rem; height: auto; text-align: center;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 86%, transparent 100%); }
 .portrait .v-ly { padding: 0 .16rem; }
-.portrait .v-ly p { margin-bottom: .1rem; font-size: .23rem; font-weight: 500; letter-spacing: .04em; opacity: .62; transform-origin: 50% 50%; }
-.portrait .v-ctl { left: 0; right: 0; bottom: .3rem; justify-content: center; }
+.portrait .v-ly p { margin-bottom: .08rem; font-size: .21rem; font-weight: 500; letter-spacing: .04em; opacity: .45; transform-origin: 50% 50%; }
+.portrait .v-ly p.on { font-size: .3rem; font-weight: 800; opacity: 1; transform: scale(1.06); }
+.v-bar { display: none; }
+.portrait .v-bar { display: block; position: absolute; left: 16%; right: 16%; bottom: 1.34rem; height: 2px; border-radius: 2px; background: rgba(36, 32, 27, .12); overflow: hidden; }
+.v-bar i { display: block; height: 100%; width: 0; background: var(--hit, #a4662e); }
+.portrait .v-ctl { left: 0; right: 0; bottom: .28rem; justify-content: center; }
+.pg-vinyl.empty .v-bar { display: none; }
 .portrait .v-btn { margin: 0 .14rem; }
 .portrait .v-empty { left: 0; right: 0; top: auto; bottom: 1.3rem; text-align: center; }
 
@@ -186,10 +194,14 @@ html.night .v-ly p.on { text-shadow: 0 0 .2rem rgba(0, 0, 0, .45); }
 html.day .v-title { text-shadow: 0 .02rem .14rem rgba(255, 253, 248, .8); }
 html.night .v-title { text-shadow: 0 .02rem .2rem rgba(0, 0, 0, .55); }
 /* 夜间歌词透明度需与竖屏层级保持一致 */
-html.day.portrait .v-ly p { color: rgba(36, 32, 27, .46); font-weight: 500; }
-html.day.portrait .v-ly p.on { color: var(--ink); font-weight: 700; }
-html.night.portrait .v-ly p { opacity: .5; }
-html.night.portrait .v-ly p.on { opacity: 1; }
+html.day.portrait .v-meta { background: rgba(255, 253, 248, .62); }
+html.day.portrait .v-title { color: var(--ink, #24201b); text-shadow: none; }
+html.night.portrait .v-meta { background: rgba(14, 12, 10, .46); }
+html.night.portrait .v-bar { background: rgba(247, 243, 236, .16); }
+html.day.portrait .v-ly p { color: rgba(36, 32, 27, .4); font-weight: 500; opacity: .85; }
+html.day.portrait .v-ly p.on { color: var(--hit, #a4662e); font-weight: 800; opacity: 1; }
+html.night.portrait .v-ly p { color: rgba(247, 243, 236, .4); opacity: .7; }
+html.night.portrait .v-ly p.on { color: var(--hit, #f5f1ea); opacity: 1; }
 html.night.portrait .v-meta::after { opacity: .7; }
 html.day .v-ly p.on { text-shadow: 0 .02rem .12rem rgba(255, 255, 255, .65); }
 
