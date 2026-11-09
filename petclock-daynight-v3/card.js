@@ -106,13 +106,6 @@
     return [f(0), f(8), f(4)];
   }
 
-  function progress(m) {
-    var i = $('vBarI');
-    if (!i) return;
-    var d = m && m.durationMs, p = m && m.positionMs;
-    var r = (d > 0 && p >= 0) ? Math.max(0, Math.min(1, p / d)) : 0;
-    i.style.width = (r * 100) + '%';
-  }
   function toggleBtn() {
     $('vToggle').className = 'v-btn big' + (playing ? ' playing' : '');
     $('vToggle').setAttribute('aria-label', playing ? '暂停' : '播放');
@@ -139,7 +132,6 @@
       }
     }
     lyric(m);
-    progress(m);
     toggleBtn();
     Object.keys(BTN).forEach(function (id) { var c = BTN[id]; $(id).classList.toggle('off', c !== 'toggle' && !D.can(c)); });
     loadCover(m);
@@ -455,5 +447,4 @@
   D.onCar(function (c) { if (c) { applyMode(c['display.dayNightMode']); } });
   D.onMedia(onMedia);
   onMedia(D.media());
-  setInterval(function () { var m = D.media(); if (m) progress(m); }, 500);
 })();

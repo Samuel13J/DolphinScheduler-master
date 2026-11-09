@@ -47,7 +47,7 @@ html.landscape .clock-box { transform: translate(-50%, -25%); }
 
 
 .v-meta { position: absolute; left: 68%; right: .44rem; top: .98rem; }
-.v-state { display: flex; align-items: center; font-size: .2rem; color: var(--mute); letter-spacing: .1em; }
+.v-state { display: none; align-items: center; font-size: .2rem; color: var(--mute); letter-spacing: .1em; }
 .v-state::before { content: ""; width: .1rem; height: .1rem; margin-right: .1rem; border-radius: 50%; background: #ffb067; }
 .v-state.paused::before { background: rgba(245, 241, 234, .35); }
 .v-title { margin-top: .16rem; font-size: .46rem; font-weight: 700; line-height: 1.22; letter-spacing: .01em; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
@@ -55,10 +55,9 @@ html.landscape .clock-box { transform: translate(-50%, -25%); }
 
 .v-lyrics { position: absolute; left: 68%; right: .44rem; top: 2.9rem; bottom: 1.66rem; overflow: hidden;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 18%, #000 70%, transparent 100%); }
-.v-ly { position: relative; padding-right: .3rem; transition: transform .6s cubic-bezier(.2, .8, .2, 1); will-change: transform; }
-.v-ly p { margin: 0 0 .18rem; font-size: .3rem; font-weight: 600; line-height: 1.4; color: var(--mute); opacity: .75; transform-origin: 0 50%;
-  transition: color .4s ease, opacity .4s ease, transform .4s cubic-bezier(.2, .8, .2, 1); }
-.v-ly p.on { color: var(--ink); opacity: 1; transform: scale(1.28); }
+.v-ly { position: relative; padding-right: .3rem; transition: transform .85s cubic-bezier(.22, .61, .36, 1); will-change: transform; }
+.v-ly p { margin: 0 0 .18rem; font-size: .3rem; font-weight: 600; line-height: 1.45; color: var(--mute); opacity: .75; }
+.v-ly p.on { color: var(--ink); opacity: 1; }
 
 
 .v-ctl { position: absolute; left: 68%; right: .44rem; bottom: .5rem; display: flex; align-items: center; }
@@ -81,16 +80,12 @@ html.landscape .clock-box { transform: translate(-50%, -25%); }
 .portrait .v-artist { margin-top: .08rem; font-size: .3rem; font-weight: 600; letter-spacing: .12em; color: var(--mute); }
 .portrait .v-meta::after { content: ""; display: block; width: 1.6rem; height: 1px; margin: .14rem auto 0;
   background: linear-gradient(90deg, transparent, var(--hit, #a4662e) 18%, var(--hit, #a4662e) 82%, transparent); }
-.portrait .v-lyrics { left: .4rem; right: .4rem; top: 62%; bottom: 1.72rem; height: auto; text-align: center;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 86%, transparent 100%); }
-.portrait .v-ly { padding: 0 .16rem; }
-.portrait .v-ly p { margin-bottom: .08rem; font-size: .21rem; font-weight: 500; letter-spacing: .04em; opacity: .45; transform-origin: 50% 50%; }
-.portrait .v-ly p.on { font-size: .3rem; font-weight: 800; opacity: 1; transform: scale(1.06); }
-.v-bar { display: none; }
-.portrait .v-bar { display: block; position: absolute; left: 16%; right: 16%; bottom: 1.34rem; height: 2px; border-radius: 2px; background: rgba(36, 32, 27, .12); overflow: hidden; }
-.v-bar i { display: block; height: 100%; width: 0; background: var(--hit, #a4662e); }
+.portrait .v-lyrics { left: .36rem; right: .36rem; top: 58%; bottom: 1.42rem; height: auto; text-align: center;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%); }
+.portrait .v-ly { padding: 0 .12rem; }
+.portrait .v-ly p { margin-bottom: .14rem; font-size: .36rem; font-weight: 600; letter-spacing: .02em; line-height: 1.45; opacity: .55; }
+.portrait .v-ly p.on { font-weight: 600; opacity: 1; }
 .portrait .v-ctl { left: 0; right: 0; bottom: .28rem; justify-content: center; }
-.pg-vinyl.empty .v-bar { display: none; }
 .portrait .v-btn { margin: 0 .14rem; }
 .portrait .v-empty { left: 0; right: 0; top: auto; bottom: 1.3rem; text-align: center; }
 
@@ -192,24 +187,16 @@ html.day .v-title { text-shadow: 0 .02rem .14rem rgba(255, 253, 248, .8); }
 html.night .v-title { text-shadow: 0 .02rem .2rem rgba(0, 0, 0, .55); }
 /* 夜间歌词透明度需与竖屏层级保持一致 */
 html.day.portrait .v-title { color: var(--ink, #24201b); text-shadow: none; }
-html.night.portrait .v-bar { background: rgba(247, 243, 236, .16); }
-html.day.portrait .v-ly p { color: rgba(36, 32, 27, .4); font-weight: 500; opacity: .85; }
-html.day.portrait .v-ly p.on { color: var(--hit, #a4662e); font-weight: 800; opacity: 1; }
-html.night.portrait .v-ly p { color: rgba(247, 243, 236, .4); opacity: .7; }
-html.night.portrait .v-ly p.on { color: var(--hit, #f5f1ea); opacity: 1; }
+html.day.portrait .v-ly p { color: rgba(36, 32, 27, .42); font-weight: 600; opacity: .85; }
+html.day.portrait .v-ly p.on { color: var(--hit, #a4662e); font-weight: 600; opacity: 1; }
+html.night.portrait .v-ly p { color: rgba(247, 243, 236, .42); font-weight: 600; opacity: .7; }
+html.night.portrait .v-ly p.on { color: var(--hit, #f5f1ea); font-weight: 600; opacity: 1; }
 html.night.portrait .v-meta::after { opacity: .7; }
 html.day .v-ly p.on { text-shadow: 0 .02rem .12rem rgba(255, 255, 255, .65); }
 
 /* 日期跟封面色，时针和分针保持原来的深色 / 夜间浅色 */
 html.day .clk .tdate { fill: var(--hit-day, #a4662e); }
 html.night .clk .tdate { fill: var(--hit-night, #f5f1ea); }
-/* 竖屏进度条加粗、圆头、末端有光点 */
-.portrait .v-bar { height: .05rem; border-radius: .05rem; overflow: visible; }
-.v-bar i { position: relative; border-radius: .05rem; box-shadow: 0 0 .08rem var(--hit, #a4662e); }
-.v-bar i::after {
-  content: ""; position: absolute; right: -.02rem; top: 50%; width: .12rem; height: .12rem; margin-top: -.06rem;
-  border-radius: 50%; background: var(--hit, #a4662e); box-shadow: 0 0 .12rem .02rem var(--hit, #a4662e);
-}
 /* 暂停时封面色光收淡，当前句变淡；播放后恢复。不盖白纱，避免把整张卡洗灰 */
 html.day .pg-vinyl.is-paused .glow.on { filter: saturate(.4) brightness(1.06); }
 html.night .pg-vinyl.is-paused .glow.on { filter: saturate(.55) brightness(.78); }
@@ -224,15 +211,6 @@ html.night .pg-vinyl.is-paused .v-ly p.on { opacity: .42; }
 .pg-vinyl.swap .v-lyrics { animation: lyricIn .7s ease; }
 @keyframes titleIn { from { opacity: 0; transform: translate3d(0, .12rem, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
 @keyframes lyricIn { from { opacity: 0; } to { opacity: 1; } }
-/* 播放时光点呼吸，暂停停住 */
-.pg-vinyl:not(.is-paused) .v-bar i::after { animation: barBreath 1.6s ease-in-out infinite; }
-@keyframes barBreath {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 .08rem .01rem var(--hit, #a4662e); }
-  50% { transform: scale(1.6); box-shadow: 0 0 .22rem .06rem var(--hit, #a4662e); }
-}
-/* 播放时收起「正在播放」，歌名落到这行空出来的位置；暂停仍显示「已暂停」 */
-.v-state:not(.paused) { display: none; }
-
 /* 背景光缓慢漂移，让取色氛围有呼吸感 */
 @keyframes glowDrift {
   0% { transform: translate3d(0, 0, 0) scale(1.03); }
@@ -240,7 +218,7 @@ html.night .pg-vinyl.is-paused .v-ly p.on { opacity: .42; }
   100% { transform: translate3d(0, 0, 0) scale(1.03); }
 }
 .glow.on { animation: glowDrift 46s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) { .glow.on, .v-bar i::after, .pg-vinyl.swap .v-title, .pg-vinyl.swap .v-artist, .pg-vinyl.swap .v-lyrics { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .glow.on, .v-ly, .pg-vinyl.swap .v-title, .pg-vinyl.swap .v-artist, .pg-vinyl.swap .v-lyrics { animation: none; transition: none; } }
 
 /* 竖屏背景：四角几点星尘。压在光晕上面、时钟和文字下面 */
 .clock-wrap, .ui { z-index: 2; }
