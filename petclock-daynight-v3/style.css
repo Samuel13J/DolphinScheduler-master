@@ -200,36 +200,33 @@ html.night.portrait .v-ly p.on { color: var(--hit, #f5f1ea); opacity: 1; }
 html.night.portrait .v-meta::after { opacity: .7; }
 html.day .v-ly p.on { text-shadow: 0 .02rem .12rem rgba(255, 255, 255, .65); }
 
-/* 效果图：?fx=1 指针和日期跟封面色 */
-html.fx1.day .clk .thour, html.fx1.day .clk .tmin { stroke: var(--hit-day, #a4662e); }
-html.fx1.day .clk .tdate { fill: var(--hit-day, #a4662e); }
-html.fx1.night .clk .thour, html.fx1.night .clk .tmin { stroke: var(--hit-night, #f5f1ea); }
-html.fx1.night .clk .tdate { fill: var(--hit-night, #f5f1ea); }
-/* 效果图：?fx=2 当前句背后一层淡色光 */
-html.fx2 .v-ly p.on { position: relative; }
-html.fx2 .v-ly p.on::before {
+/* 指针和日期跟封面色，数字仍用深色 */
+html.day .clk .thour, html.day .clk .tmin { stroke: var(--hit-day, #a4662e); }
+html.day .clk .tdate { fill: var(--hit-day, #a4662e); }
+html.night .clk .thour, html.night .clk .tmin { stroke: var(--hit-night, #f5f1ea); }
+html.night .clk .tdate { fill: var(--hit-night, #f5f1ea); }
+/* 当前句背后一层淡色光 */
+.v-ly p.on { position: relative; }
+.v-ly p.on::before {
   content: ""; position: absolute; z-index: -1; left: 50%; top: 50%; width: 4.6rem; height: .78rem;
   margin-left: -2.3rem; margin-top: -.39rem; border-radius: .4rem; pointer-events: none;
   background: radial-gradient(ellipse at 50% 50%, var(--hit, #a4662e) 0%, rgba(255, 253, 248, 0) 72%);
   opacity: .42;
 }
-/* 效果图：?fx=3 进度条加粗、圆头、末端有光点 */
-html.fx3.portrait .v-bar { height: .05rem; border-radius: .05rem; overflow: visible; }
-html.fx3 .v-bar i { position: relative; border-radius: .05rem; box-shadow: 0 0 .08rem var(--hit, #a4662e); }
-html.fx3 .v-bar i::after {
+/* 竖屏进度条加粗、圆头、末端有光点 */
+.portrait .v-bar { height: .05rem; border-radius: .05rem; overflow: visible; }
+.v-bar i { position: relative; border-radius: .05rem; box-shadow: 0 0 .08rem var(--hit, #a4662e); }
+.v-bar i::after {
   content: ""; position: absolute; right: -.02rem; top: 50%; width: .12rem; height: .12rem; margin-top: -.06rem;
   border-radius: 50%; background: var(--hit, #a4662e); box-shadow: 0 0 .12rem .02rem var(--hit, #a4662e);
 }
-/* 效果图：?fx=4 暂停时背景光和当前句变淡 */
-html.fx4.day .pg-vinyl.is-paused .bg::after {
-  content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none;
-  background: rgba(255, 253, 248, .58);
-}
-html.fx4.night .pg-vinyl.is-paused .bg::after {
-  content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none;
-  background: rgba(8, 7, 6, .4);
-}
-html.fx4 .pg-vinyl.is-paused .v-ly p.on { opacity: .42; }
+/* 暂停时封面色光收淡，当前句变淡；播放后恢复。不盖白纱，避免把整张卡洗灰 */
+html.day .pg-vinyl.is-paused .glow.on { filter: saturate(.4) brightness(1.06); }
+html.night .pg-vinyl.is-paused .glow.on { filter: saturate(.55) brightness(.78); }
+html.day.portrait .pg-vinyl.is-paused .v-ly p.on,
+html.night.portrait .pg-vinyl.is-paused .v-ly p.on,
+html.day .pg-vinyl.is-paused .v-ly p.on,
+html.night .pg-vinyl.is-paused .v-ly p.on { opacity: .42; }
 
 /* 背景光缓慢漂移，让取色氛围有呼吸感 */
 @keyframes glowDrift {

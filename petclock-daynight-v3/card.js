@@ -2,12 +2,6 @@
 (function () {
   'use strict';
   var D = window.D3Data, doc = document;
-  /* 效果图预览：?fx=1 时钟跟色，2 当前句光，3 进度条，4 暂停变淡。车上不带这个参数，外观不变 */
-  (function () {
-    var m = /[?&]fx=(1|2|3|4|all)(?:&|$)/.exec(location.search);
-    if (!m) return;
-    doc.documentElement.className += m[1] === 'all' ? ' fx1 fx2 fx3 fx4' : (' fx' + m[1]);
-  })();
   var $ = function (id) { return document.getElementById(id); };
   var el = $('pgVinyl');
 
