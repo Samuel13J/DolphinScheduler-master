@@ -2,6 +2,12 @@
 (function () {
   'use strict';
   var D = window.D3Data, doc = document;
+  /* 效果图预览：?fx=1 时钟跟色，2 当前句光，3 进度条，4 暂停变淡。车上不带这个参数，外观不变 */
+  (function () {
+    var m = /[?&]fx=(1|2|3|4|all)(?:&|$)/.exec(location.search);
+    if (!m) return;
+    doc.documentElement.className += m[1] === 'all' ? ' fx1 fx2 fx3 fx4' : (' fx' + m[1]);
+  })();
   var $ = function (id) { return document.getElementById(id); };
   var el = $('pgVinyl');
 
@@ -120,7 +126,8 @@
   function onMedia(m) {
     media = m; gotAt = Date.now();
     el.classList.toggle('empty', !m);
-    playing = !!(m && m.playing); 
+    playing = !!(m && m.playing);
+    el.classList.toggle('is-paused', !playing); 
     text('vTitle', m ? m.title || '未知歌曲' : '');
     text('vArtist', m ? m.artist || '' : '');
     text('vState', playing ? '正在播放' : '已暂停');
@@ -210,7 +217,7 @@
     if (!media) return;
     if (cmd === 'toggle') cmd = playing ? 'pause' : 'play';
     if (!D.can(cmd)) return;
-    if (cmd === 'play' || cmd === 'pause') { playing = cmd === 'play'; toggleBtn(); } 
+    if (cmd === 'play' || cmd === 'pause') { playing = cmd === 'play'; el.classList.toggle('is-paused', !playing); toggleBtn(); } 
     D.send(cmd).then(null, function () { onMedia(D.media()); });
   }
   Object.keys(BTN).forEach(function (id) { $(id).addEventListener('click', function () { press(BTN[id]); }); });
