@@ -228,6 +228,21 @@ html.night.portrait .pg-vinyl.is-paused .v-ly p.on,
 html.day .pg-vinyl.is-paused .v-ly p.on,
 html.night .pg-vinyl.is-paused .v-ly p.on { opacity: .42; }
 
+/* 预览 1：换歌时歌名上移淡入，歌词淡入 */
+html.look1 .pg-vinyl.swap .v-title,
+html.look1 .pg-vinyl.swap .v-artist { animation: titleIn .7s ease; }
+html.look1 .pg-vinyl.swap .v-lyrics { animation: lyricIn .7s ease; }
+@keyframes titleIn { from { opacity: 0; transform: translate3d(0, .12rem, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+@keyframes lyricIn { from { opacity: 0; } to { opacity: 1; } }
+/* 预览 2：播放时光点呼吸，暂停停住 */
+html.look2 .pg-vinyl:not(.is-paused) .v-bar i::after { animation: barBreath 1.6s ease-in-out infinite; }
+@keyframes barBreath {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 .08rem .01rem var(--hit, #a4662e); }
+  50% { transform: scale(1.6); box-shadow: 0 0 .22rem .06rem var(--hit, #a4662e); }
+}
+/* 预览 3：播放时收起「正在播放」，歌名落到这行空出来的位置；暂停仍显示「已暂停」 */
+html.look3 .v-state:not(.paused) { display: none; }
+
 /* 背景光缓慢漂移，让取色氛围有呼吸感 */
 @keyframes glowDrift {
   0% { transform: translate3d(0, 0, 0) scale(1.03); }

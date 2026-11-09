@@ -2,6 +2,11 @@
 (function () {
   'use strict';
   var D = window.D3Data, doc = document;
+  /* 效果预览：?look=1 换歌淡入，2 进度光点呼吸，3 播放时收起状态行。车上不带参数，外观不变 */
+  (function () {
+    var m = /[?&]look=(1|2|3)(?:&|$)/.exec(location.search);
+    if (m) doc.documentElement.className += ' look' + m[1];
+  })();
   var $ = function (id) { return document.getElementById(id); };
   var el = $('pgVinyl');
 
@@ -128,7 +133,9 @@
     $('vState').className = 'v-state' + (playing ? '' : ' paused');
     var tid = m ? m.trackId || m.title : null;
     if (tid !== lyrTrack) {
+      var swapped = lyrTrack != null && tid != null;
       lyrTrack = tid; lines = [];
+      if (swapped) fadeSwap();
       if (m) {
        
         lyPrev = (ly.rows.length && ly.rows[ly.idx >= 0 ? ly.idx : ly.rows.length - 1]) || '';
@@ -143,6 +150,15 @@
     loadCover(m);
   }
   
+  var swapT = 0;
+  function fadeSwap() {
+    if ((' ' + doc.documentElement.className + ' ').indexOf(' look1 ') < 0) return;
+    el.classList.remove('swap');
+    void el.offsetWidth;
+    el.classList.add('swap');
+    clearTimeout(swapT);
+    swapT = setTimeout(function () { el.classList.remove('swap'); }, 800);
+  }
   var lyrGen = 0;
   function loadLyrics(tid) {
     var g = ++lyrGen;
