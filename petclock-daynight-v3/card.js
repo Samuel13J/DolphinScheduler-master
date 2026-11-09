@@ -106,12 +106,6 @@
     return [f(0), f(8), f(4)];
   }
 
-  function showCover(url) {
-    var img = $('vCover');
-    if (!img) return;
-    if (url) { img.src = url; img.className = 'v-cover'; }
-    else { img.removeAttribute('src'); img.className = 'v-cover off'; }
-  }
   function progress(m) {
     var i = $('vBarI');
     if (!i) return;
@@ -227,7 +221,7 @@
     if (key === coverKey) return;
     coverKey = key;
     var seq = ++coverSeq;
-    function label(img) { showCover(''); glow(null, m, img); }
+    function label(img) { glow(null, m, img); }
     if (!url || !window.fetch || !window.URL) { label(null); return; }
     fetch(url, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); }).then(function (b) {
       if (seq !== coverSeq) return;
@@ -236,7 +230,6 @@
         if (seq !== coverSeq) { URL.revokeObjectURL(u); return; }
         if (blobUrl) URL.revokeObjectURL(blobUrl);
         blobUrl = u;
-        showCover(u);
         glow(palette(img), m, img);
       };
       img.onerror = function () { URL.revokeObjectURL(u); if (seq === coverSeq) { label(null); } };
