@@ -75,13 +75,13 @@ html.landscape .clock-box { transform: translate(-50%, -25%); }
 .pg-vinyl.empty .v-meta, .pg-vinyl.empty .v-lyrics, .pg-vinyl.empty .v-ctl { display: none; }
 
 
-.portrait .v-meta { left: .28rem; right: .28rem; top: 48%; bottom: auto; text-align: center; padding: .14rem .2rem .16rem; border-radius: .28rem; background: rgba(255, 253, 248, .58); }
+.portrait .v-meta { left: .28rem; right: .28rem; top: 48%; bottom: auto; text-align: center; }
 .portrait .v-state { justify-content: center; font-size: .18rem; letter-spacing: .16em; }
 .portrait .v-title { margin-top: .08rem; font-size: .42rem; font-weight: 800; line-height: 1.16; letter-spacing: .03em; -webkit-line-clamp: 2; }
 .portrait .v-artist { margin-top: .08rem; font-size: .3rem; font-weight: 600; letter-spacing: .12em; color: var(--mute); }
 .portrait .v-meta::after { content: ""; display: block; width: 1.6rem; height: 1px; margin: .14rem auto 0;
   background: linear-gradient(90deg, transparent, var(--hit, #a4662e) 18%, var(--hit, #a4662e) 82%, transparent); }
-.portrait .v-lyrics { left: .4rem; right: .4rem; top: 64%; bottom: 1.72rem; height: auto; text-align: center;
+.portrait .v-lyrics { left: .4rem; right: .4rem; top: 62%; bottom: 1.72rem; height: auto; text-align: center;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 86%, transparent 100%); }
 .portrait .v-ly { padding: 0 .16rem; }
 .portrait .v-ly p { margin-bottom: .08rem; font-size: .21rem; font-weight: 500; letter-spacing: .04em; opacity: .45; transform-origin: 50% 50%; }
@@ -191,9 +191,7 @@ html.night .v-ly p.on { text-shadow: 0 0 .2rem rgba(0, 0, 0, .45); }
 html.day .v-title { text-shadow: 0 .02rem .14rem rgba(255, 253, 248, .8); }
 html.night .v-title { text-shadow: 0 .02rem .2rem rgba(0, 0, 0, .55); }
 /* 夜间歌词透明度需与竖屏层级保持一致 */
-html.day.portrait .v-meta { background: rgba(255, 253, 248, .62); }
 html.day.portrait .v-title { color: var(--ink, #24201b); text-shadow: none; }
-html.night.portrait .v-meta { background: rgba(14, 12, 10, .46); }
 html.night.portrait .v-bar { background: rgba(247, 243, 236, .16); }
 html.day.portrait .v-ly p { color: rgba(36, 32, 27, .4); font-weight: 500; opacity: .85; }
 html.day.portrait .v-ly p.on { color: var(--hit, #a4662e); font-weight: 800; opacity: 1; }
