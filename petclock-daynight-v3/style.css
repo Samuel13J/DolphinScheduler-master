@@ -1,0 +1,236 @@
+
+html { font-size: calc(100vh / 10.52); -webkit-text-size-adjust: 100%; }
+html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+body {
+  font-size: .2rem; 
+  background: #101113;
+  color: #14171c;
+  font-family: "MiSans", "PingFang SC", "Noto Sans CJK SC", "Source Han Sans CN", "Microsoft YaHei", sans-serif;
+  -webkit-user-select: none; user-select: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+@font-face { font-family: "PetDigitsTall"; font-weight: 500; src: url("assets/fonts/oswald-digits-500.woff2") format("woff2"); }
+@font-face { font-family: "PetDateCN"; font-weight: 500; src: url("assets/fonts/notosanssc-date-500.woff2") format("woff2"); }
+.app { position: relative; width: 100%; height: 100%; overflow: hidden; }
+.pg { position: absolute; top: 0; width: 100%; height: 100%; overflow: hidden; }
+.bg, .ui { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.ui { pointer-events: none; }
+.pg-vinyl { --ink: #f5f1ea; --mute: rgba(245, 241, 234, .55); color: var(--ink); }
+.pg-vinyl .bg { background: #0f0e0d; }
+.glow { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1.2s ease; }
+.glow.on { opacity: 1; }
+.clock-wrap { display: none; position: absolute; pointer-events: none; }
+html.landscape .clock-wrap.l { display: block; left: .15rem; width: 66%; top: .3rem; bottom: .3rem; }
+html.portrait .clock-wrap.p { display: block; left: 0; width: 100%; top: 0; height: 100%; }
+.clock-box { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); overflow: hidden; }
+html.landscape .clock-box { transform: translate(-50%, -25%); }
+.clock-wrap.p .clock-box { top: 0; transform: translate(-50%, 0); }
+.clock-box .dialframe {
+  position: absolute; display: block; pointer-events: none; -webkit-user-drag: none;
+  filter: invert(1); -webkit-filter: invert(1);
+}
+.clock-wrap.l .dialframe { left: 27.777%; top: -0.565%; width: 45.148%; height: 50.758%; }
+.clock-wrap.p .dialframe { left: 9.376%; top: 2.062%; width: 81.514%; height: 48.095%; }
+.clock-box .clk { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+.clk .tnum {
+  font-family: "PetDigitsTall", "PetDigits", "MiSans", "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+  font-weight: 500;
+  fill: #d9d2c8;
+}
+.clk .thour, .clk .tmin { stroke: #f5f1ea; }
+.clk .tdate {
+  font-family: "PetDateCN", "Noto Sans SC", "PingFang SC", "Noto Sans CJK SC", "Source Han Sans CN", "Microsoft YaHei", sans-serif;
+  font-weight: 500;
+  fill: #cfc8bc;
+}
+
+
+.v-meta { position: absolute; left: 68%; right: .44rem; top: .98rem; }
+.v-state { display: none; align-items: center; font-size: .2rem; color: var(--mute); letter-spacing: .1em; }
+.v-state::before { content: ""; width: .1rem; height: .1rem; margin-right: .1rem; border-radius: 50%; background: #ffb067; }
+.v-state.paused::before { background: rgba(245, 241, 234, .35); }
+.v-title { margin-top: .16rem; font-size: .46rem; font-weight: 700; line-height: 1.22; letter-spacing: .01em; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.v-artist { margin-top: .1rem; font-size: .26rem; color: var(--mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.v-lyrics { position: absolute; left: 68%; right: .44rem; top: 2.9rem; bottom: 1.66rem; overflow: hidden; }
+.v-ly { position: relative; padding-right: .3rem; }
+.v-ly p { margin: 0 0 .18rem; font-size: .3rem; font-weight: 600; line-height: 1.45; color: var(--mute); opacity: .75; }
+.v-ly p.on { color: var(--ink); opacity: 1; }
+
+
+.v-ctl { position: absolute; left: 68%; right: .44rem; bottom: .5rem; display: flex; align-items: center; }
+.v-btn { display: flex; align-items: center; justify-content: center; width: .8rem; height: .8rem; margin-right: .2rem; padding: .22rem; border: 1px solid rgba(245, 241, 234, .2); border-radius: 50%;
+  background: transparent; color: var(--ink); outline: none; pointer-events: auto; cursor: pointer; -webkit-appearance: none; appearance: none; transition: transform .12s ease; }
+.v-btn.big { width: 1rem; height: 1rem; padding: .28rem; border: 0; background: var(--ink); color: #1a1714; }
+.v-btn:active { transform: scale(.9); }
+.v-btn svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+.v-btn .i-pause, .v-btn.playing .i-play { display: none; }
+.v-btn.playing .i-pause { display: block; }
+.v-btn.off { display: none; }
+.v-empty { display: none; position: absolute; left: 68%; right: .44rem; top: 46%; font-size: .26rem; color: var(--mute); }
+.pg-vinyl.empty .v-empty { display: block; }
+.pg-vinyl.empty .v-meta, .pg-vinyl.empty .v-lyrics, .pg-vinyl.empty .v-ctl { display: none; }
+
+
+.portrait .v-meta { left: .28rem; right: .28rem; top: 48%; bottom: auto; text-align: center; }
+.portrait .v-state { justify-content: center; font-size: .18rem; letter-spacing: .16em; }
+.portrait .v-title { margin-top: .08rem; font-size: .42rem; font-weight: 800; line-height: 1.16; letter-spacing: .03em; -webkit-line-clamp: 2; }
+.portrait .v-artist { margin-top: .08rem; font-size: .3rem; font-weight: 600; letter-spacing: .12em; color: var(--mute); }
+.portrait .v-meta::after { content: ""; display: block; width: 1.6rem; height: 1px; margin: .14rem auto 0;
+  background: linear-gradient(90deg, transparent, var(--hit, #a4662e) 18%, var(--hit, #a4662e) 82%, transparent); }
+.portrait .v-lyrics { left: .36rem; right: .36rem; top: 58%; bottom: 1.42rem; height: auto; text-align: center; }
+.portrait .v-ly { padding: 0 .12rem; }
+.portrait .v-ly p { margin-bottom: .12rem; font-size: .3rem; font-weight: 600; letter-spacing: .02em; line-height: 1.45; opacity: .55; }
+.portrait .v-ly p.on { font-weight: 600; opacity: 1; }
+.portrait .v-ctl { left: 0; right: 0; bottom: .28rem; justify-content: center; }
+.portrait .v-btn { margin: 0 .14rem; }
+.portrait .v-empty { left: 0; right: 0; top: auto; bottom: 1.3rem; text-align: center; }
+
+
+.set { --acc: #ffb067; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 4; pointer-events: none; color: #eef1f6; }
+.set::before { content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .4s ease;
+  background: linear-gradient(90deg, rgba(5, 7, 10, 0) 25%, rgba(5, 7, 10, .55) 100%); }
+.set.on { pointer-events: auto; }
+.set.on::before { opacity: 1; }
+.set-card { position: absolute; right: .2rem; top: .2rem; bottom: .2rem; width: 46%; display: flex; flex-direction: column; border-radius: .32rem; overflow: hidden;
+  background: linear-gradient(160deg, rgba(38, 42, 52, .96) 0%, rgba(15, 17, 22, .97) 70%); border: 1px solid rgba(255, 255, 255, .08);
+  box-shadow: 0 .3rem .8rem rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .08);
+  opacity: 0; transform: perspective(14rem) translate3d(30vw, 0, 0) rotateY(-28deg); transform-origin: 100% 50%;
+  transition: transform .55s cubic-bezier(.2, .8, .2, 1), opacity .35s ease; }
+.set-card::before { content: ""; position: absolute; left: .3rem; right: .3rem; top: 0; height: .03rem; background: linear-gradient(90deg, rgba(0, 0, 0, 0), var(--acc), rgba(0, 0, 0, 0)); }
+.set.on .set-card { opacity: 1; transform: perspective(14rem) translate3d(0, 0, 0) rotateY(0deg); }
+.set-head { display: flex; align-items: center; justify-content: space-between; padding: .26rem .2rem .04rem .32rem; }
+.set-head b { font-size: .34rem; font-weight: 700; letter-spacing: .04em; }
+.set-x { width: .56rem; height: .56rem; padding: .14rem; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .08); color: #eef1f6; outline: none; -webkit-appearance: none; appearance: none; }
+.set-x svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+.set-body { flex: 1; overflow-x: hidden; overflow-y: auto; touch-action: pan-y; padding: 0 .32rem .3rem; }
+.set-group { margin: .22rem 0 .02rem; font-size: .2rem; letter-spacing: .18em; color: rgba(238, 241, 246, .4); }
+.set-row { display: flex; align-items: center; justify-content: space-between; padding: .16rem 0; border-bottom: 1px solid rgba(255, 255, 255, .06); }
+.set-row.col { flex-direction: column; align-items: stretch; }
+.set-lb { font-size: .26rem; font-weight: 500; }
+.set-lb small { display: block; margin-top: .04rem; font-size: .19rem; font-weight: 400; color: rgba(238, 241, 246, .45); }
+.sw { position: relative; flex: none; width: .78rem; height: .44rem; margin-left: .2rem; padding: 0; border: 0; border-radius: .22rem; background: rgba(255, 255, 255, .14); outline: none;
+  -webkit-appearance: none; appearance: none; transition: background-color .3s ease; }
+.sw i { position: absolute; left: .05rem; top: .05rem; width: .34rem; height: .34rem; border-radius: 50%; background: #fff; box-shadow: 0 .02rem .06rem rgba(0, 0, 0, .4);
+  transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+.sw.on { background: var(--acc); }
+.sw.on i { transform: translate3d(.34rem, 0, 0); }
+.acts { display: flex; flex-wrap: wrap; margin-top: .14rem; }
+.act { margin: 0 .14rem .1rem 0; padding: .1rem .24rem; border: 1px solid rgba(255, 255, 255, .16); border-radius: .3rem; background: rgba(255, 255, 255, .06); color: #eef1f6;
+  font-family: inherit; font-size: .22rem; outline: none; cursor: pointer; -webkit-appearance: none; appearance: none; }
+.act.pri { border-color: transparent; background: var(--acc); color: #fff; font-weight: 600; box-shadow: 0 .04rem .16rem rgba(0, 0, 0, .25); }
+.set.on .set-body > * { animation: setIn .5s cubic-bezier(.2, .8, .2, 1) backwards; }
+@keyframes setIn { from { opacity: 0; transform: translate3d(.6rem, 0, 0); } }
+.portrait .set::before { background: linear-gradient(180deg, rgba(5, 7, 10, 0) 25%, rgba(5, 7, 10, .55) 100%); }
+.portrait .set-card { left: .16rem; right: .16rem; top: auto; bottom: .16rem; width: auto; height: 64%; transform-origin: 50% 100%;
+  transform: perspective(14rem) translate3d(0, 40vh, 0) rotateX(26deg); }
+.portrait .set.on .set-card { transform: perspective(14rem) translate3d(0, 0, 0) rotateX(0deg); }
+
+/* ===== 提示条 ===== */
+.toast { position: absolute; left: 50%; bottom: 1.3rem; z-index: 8; width: 7rem; max-width: 90%; margin-left: -3.5rem; display: flex; justify-content: center; pointer-events: none;
+  opacity: 0; transform: translate3d(0, .2rem, 0); transition: opacity .3s ease, transform .3s ease; }
+.toast.on { opacity: 1; transform: translate3d(0, 0, 0); }
+.toast p { min-width: 0; margin: 0; padding: .14rem .3rem; border-radius: .3rem; background: rgba(22, 25, 31, .94); color: #eef1f6; font-size: .23rem; line-height: 1.5; text-align: center; word-break: break-word;
+  box-shadow: 0 .1rem .3rem rgba(0, 0, 0, .4); }
+.portrait .toast { width: 4.6rem; margin-left: -2.3rem; bottom: 2.9rem; }
+
+/* ===== 昼夜模式（宿主 display.dayNightMode：16 白天 / 32 夜间） ===== */
+.pg-vinyl .bg, .pg-vinyl .ui, .clk .tnum, .clk .thour, .clk .tmin, .clk .tdate, .clock-box .dialframe,
+.v-btn, .v-btn.big, .v-title, .v-artist, .v-state {
+  transition: background-color .9s ease, color .9s ease, fill .9s ease, stroke .9s ease, filter .9s ease, border-color .9s ease;
+}
+
+/* 白天：晨光纸底 + 封面取色柔晕，深墨字保证可读，整体明亮不发灰 */
+html.day .pg-vinyl { --ink: var(--ink-day, #24201b); --mute: var(--mute-day, rgba(36, 32, 27, .58)); --hit: var(--hit-day, #a4662e); --hit2: var(--hit-day-2, #c8843a); --on-hit: #fffdf8; }
+html.day .pg-vinyl .bg { background: var(--paper-1, #f7f3ec); }
+html.day .glow { filter: saturate(1.12); }
+html.day .pg-vinyl .ui { mix-blend-mode: normal; }
+html.day .clk .tnum { fill: var(--ink-day-2, #3f3a33); }
+html.day .clk .thour, html.day .clk .tmin { stroke: var(--hand-day, #14110e); }
+html.night .clk .thour, html.night .clk .tmin { stroke: var(--hand-night, #8d8172); }
+html.day .clk .tdate { fill: var(--mute-day, #575146); }
+html.day .clock-box .dialframe { filter: none; -webkit-filter: none; }
+html.day .v-state::before { background: var(--hit, #ff8a2b); }
+html.day .v-state.paused::before { background: rgba(35, 32, 28, .28); }
+html.day .v-btn { border-color: rgba(35, 32, 28, .16); background: rgba(255, 255, 255, .46); }
+html.day .v-btn.big { border: 0; background: linear-gradient(135deg, var(--hit) 0%, var(--hit2) 100%); color: var(--on-hit, #fffdf8);
+                     box-shadow: 0 .1rem .26rem rgba(60, 50, 40, .34), 0 .02rem .06rem rgba(60, 50, 40, .22), 0 0 0 1px rgba(255, 253, 248, .5), inset 0 -.02rem .06rem rgba(0, 0, 0, .14); }
+html.day .toast p { background: rgba(252, 249, 244, .97); color: #23201c; box-shadow: 0 .1rem .3rem rgba(60, 50, 40, .18); }
+/* 昼夜：非当前行歌词加浓，避免发灰看不清 */
+html.day .v-ly p { opacity: 1; color: rgba(36, 32, 27, .74); }
+html.day .v-ly p.on { color: var(--ink); }
+html.night .v-ly p { opacity: 1; color: rgba(247, 243, 236, .74); }
+html.night .v-ly p.on { color: var(--ink); }
+/* 白天右侧文字区叠一层柔白纱，压掉晕染保证文字干净（只影响右列，不动时钟） */
+html.day .pg-vinyl .ui::before { content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none;
+  background: linear-gradient(90deg, var(--veil-day-0, rgba(255,253,248,0)) 50%, var(--veil-day, rgba(255,253,248,.38)) 76%, var(--veil-day-2, rgba(255,253,248,.58)) 100%); }
+html.portrait.day .pg-vinyl .ui::before { background: linear-gradient(180deg, var(--veil-day-0, rgba(255,253,248,0)) 42%, var(--veil-day, rgba(255,253,248,.38)) 64%, var(--veil-day-2, rgba(255,253,248,.6)) 100%); }
+
+/* 夜间：深色 + 封面取色浓氛围光，右列加暗保证歌词清晰 */
+html.night .pg-vinyl { --ink: #f7f3ec; --mute: rgba(247, 243, 236, .58); --hit: var(--hit-night, #f5f1ea); --hit2: var(--hit-night-2, #ffd9a8); --on-hit: #14110e; }
+html.night .pg-vinyl .bg { background: #0f0e0d; }
+html.night .glow { filter: saturate(1.12) brightness(.96); }
+html.night .v-btn { border-color: rgba(247, 243, 236, .22); background: rgba(255, 255, 255, .05); }
+html.night .v-btn.big { border: 0; background: linear-gradient(135deg, var(--hit) 0%, var(--hit2) 100%); color: var(--on-hit, #14110e); filter: brightness(1.1) saturate(1.06);
+  box-shadow: 0 .08rem .3rem rgba(0, 0, 0, .6), 0 0 0 .035rem rgba(247, 243, 236, .38), 0 0 .5rem rgba(255, 240, 220, .3); }
+html.night .pg-vinyl .ui::before { content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none;
+  background: linear-gradient(90deg, rgba(8, 7, 6, 0) 46%, rgba(8, 7, 6, .30) 66%, rgba(8, 7, 6, .48) 100%); }
+html.portrait.night .pg-vinyl .ui::before { background: linear-gradient(180deg, rgba(8, 7, 6, 0) 40%, rgba(8, 7, 6, .32) 60%, rgba(8, 7, 6, .5) 100%); }
+
+/* 当前歌词行用封面取色点亮 */
+html.day .v-ly p.on, html.night .v-ly p.on { color: var(--hit, var(--ink)); }
+html.night .v-ly p.on { text-shadow: 0 0 .2rem rgba(0, 0, 0, .45); }
+/* 歌名：加大后补一点柔光/暗影，让标题与歌词层次更清楚 */
+html.day .v-title { text-shadow: 0 .02rem .14rem rgba(255, 253, 248, .8); }
+html.night .v-title { text-shadow: 0 .02rem .2rem rgba(0, 0, 0, .55); }
+/* 夜间歌词透明度需与竖屏层级保持一致 */
+html.day.portrait .v-title { color: var(--ink, #24201b); text-shadow: none; }
+html.day.portrait .v-ly p { color: rgba(36, 32, 27, .42); font-weight: 600; opacity: .85; }
+html.day.portrait .v-ly p.on { color: var(--hit, #a4662e); font-weight: 600; opacity: 1; }
+html.night.portrait .v-ly p { color: rgba(247, 243, 236, .42); font-weight: 600; opacity: .7; }
+html.night.portrait .v-ly p.on { color: var(--hit, #f5f1ea); font-weight: 600; opacity: 1; }
+html.night.portrait .v-meta::after { opacity: .7; }
+html.day .v-ly p.on { text-shadow: 0 .02rem .12rem rgba(255, 255, 255, .65); }
+
+/* 日期跟封面色，时针和分针保持原来的深色 / 夜间浅色 */
+html.day .clk .tdate { fill: var(--hit-day, #a4662e); }
+html.night .clk .tdate { fill: var(--hit-night, #f5f1ea); }
+/* 暂停时封面色光收淡，当前句变淡；播放后恢复。不盖白纱，避免把整张卡洗灰 */
+html.day .pg-vinyl.is-paused .glow.on { filter: saturate(.4) brightness(1.06); }
+html.night .pg-vinyl.is-paused .glow.on { filter: saturate(.55) brightness(.78); }
+html.day.portrait .pg-vinyl.is-paused .v-ly p.on,
+html.night.portrait .pg-vinyl.is-paused .v-ly p.on,
+html.day .pg-vinyl.is-paused .v-ly p.on,
+html.night .pg-vinyl.is-paused .v-ly p.on { opacity: .42; }
+
+/* 换歌时歌名上移淡入，歌词淡入 */
+.pg-vinyl.swap .v-title,
+.pg-vinyl.swap .v-artist { animation: titleIn .7s ease; }
+.pg-vinyl.swap .v-lyrics { animation: lyricIn .7s ease; }
+@keyframes titleIn { from { opacity: 0; transform: translate3d(0, .12rem, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+@keyframes lyricIn { from { opacity: 0; } to { opacity: 1; } }
+/* 背景光缓慢漂移，让取色氛围有呼吸感 */
+@keyframes glowDrift {
+  0% { transform: translate3d(0, 0, 0) scale(1.03); }
+  50% { transform: translate3d(1.2%, -1%, 0) scale(1.06); }
+  100% { transform: translate3d(0, 0, 0) scale(1.03); }
+}
+.glow.on { animation: glowDrift 46s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .glow.on, .v-ly, .pg-vinyl.swap .v-title, .pg-vinyl.swap .v-artist, .pg-vinyl.swap .v-lyrics { animation: none; transition: none; } }
+
+/* 竖屏背景：四角几点星尘。压在光晕上面、时钟和文字下面 */
+.clock-wrap, .ui { z-index: 2; }
+html.portrait .pg-vinyl::after { content: ""; position: absolute; z-index: 1; left: 8%; top: 7%; width: .07rem; height: .07rem; border-radius: 50%;
+  background: rgba(150, 108, 52, .55); pointer-events: none;
+  box-shadow: 0 0 0 .05rem rgba(150, 108, 52, .15),
+    74vw .4rem 0 0 rgba(150, 108, 52, .4),
+    2vw 58vh 0 -.02rem rgba(150, 108, 52, .28),
+    78vw 64vh 0 -.02rem rgba(150, 108, 52, .26),
+    46vw 92vh 0 -.025rem rgba(150, 108, 52, .22); }
+html.portrait.night .pg-vinyl::after { background: rgba(245, 236, 214, .7);
+  box-shadow: 0 0 0 .05rem rgba(245, 236, 214, .18),
+    74vw .4rem 0 0 rgba(245, 236, 214, .45),
+    2vw 58vh 0 -.02rem rgba(245, 236, 214, .32),
+    78vw 64vh 0 -.02rem rgba(245, 236, 214, .28),
+    46vw 92vh 0 -.025rem rgba(245, 236, 214, .24); }

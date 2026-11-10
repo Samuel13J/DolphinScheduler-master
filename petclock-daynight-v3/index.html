@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<script src="viewport.js"></script>
+<title>时钟 · 歌词卡片</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app" id="app">
+  <section class="pg pg-vinyl" id="pgVinyl">
+    <div class="bg"><i class="glow" id="vGlowA"></i><i class="glow" id="vGlowB"></i></div>
+
+   
+    <div class="clock-wrap l" id="clockWrapL">
+      <div class="clock-box" id="clockBoxL">
+        <img class="dialframe" src="assets/dial-frame.png" alt="" draggable="false">
+        <svg class="clk" viewBox="78 54 1664 1193" preserveAspectRatio="none" aria-hidden="true">
+          <text class="tnum" id="lh" x="664" y="454" font-size="275.4" textLength="226.5" lengthAdjust="spacingAndGlyphs">09</text>
+          <text class="tnum" id="lm" x="939" y="454" font-size="275.4" textLength="226.5" lengthAdjust="spacingAndGlyphs">28</text>
+          <line class="thour" id="lhour" x1="932.3" y1="338.3" x2="815.9" y2="309.3" stroke-width="19.5" stroke-linecap="round"></line>
+          <line class="tmin" id="lmin" x1="903.1" y1="295.8" x2="943.2" y2="484.6" stroke-width="10.5" stroke-linecap="round"></line>
+          <text class="tdate" id="ldate1" transform="scale(1.035,1)" x="842.9" y="597.5" font-size="26" text-anchor="middle">3月24日</text>
+          <text class="tdate" id="ldate2" transform="scale(0.93,1)" x="1049.9" y="599" font-size="25.7" text-anchor="middle">星期二</text>
+        </svg>
+      </div>
+    </div>
+    <div class="clock-wrap p" id="clockWrapP">
+      <div class="clock-box" id="clockBoxP">
+        <img class="dialframe" src="assets/dial-frame.png" alt="" draggable="false">
+        <svg class="clk" viewBox="86 150 1074 1540" preserveAspectRatio="none" aria-hidden="true">
+          <text class="tnum" id="ph" x="337" y="705.5" font-size="363.2" textLength="264.3" lengthAdjust="spacingAndGlyphs">09</text>
+          <text class="tnum" id="pm" x="649" y="705.5" font-size="363.2" textLength="264.3" lengthAdjust="spacingAndGlyphs">28</text>
+          <line class="thour" id="phour" x1="639.5" y1="554.1" x2="517.2" y2="523.6" stroke-width="20.5" stroke-linecap="round"></line>
+          <line class="tmin" id="pmin" x1="612.4" y1="500.1" x2="663.5" y2="740.7" stroke-width="11" stroke-linecap="round"></line>
+          <text class="tdate" id="pdate1" transform="scale(0.97,1)" x="593.4" y="873.8" font-size="29.8" text-anchor="middle">3月24日</text>
+          <text class="tdate" id="pdate2" transform="scale(0.977,1)" x="710.5" y="873.8" font-size="29.6" text-anchor="middle">星期二</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="ui">
+      <div class="v-meta">
+        <div class="v-state" id="vState">正在播放</div>
+        <div class="v-title" id="vTitle"></div>
+        <div class="v-artist" id="vArtist"></div>
+      </div>
+      <div class="v-lyrics" id="vLyrics"><div class="v-ly" id="vLy"></div></div>
+      <div class="v-ctl">
+        <button type="button" class="v-btn" id="vPrev" aria-label="上一首"><svg viewBox="0 0 24 24"><path d="M6.5 5.5h2.2v13H6.5z M18.5 6.2v11.6L9.8 12z"></path></svg></button>
+        <button type="button" class="v-btn big" id="vToggle" aria-label="播放"><svg class="i-play" viewBox="0 0 24 24"><path d="M8.5 5.8v12.4L18.6 12z"></path></svg><svg class="i-pause" viewBox="0 0 24 24"><path d="M7.2 5.5h3.4v13H7.2z M13.4 5.5h3.4v13h-3.4z"></path></svg></button>
+        <button type="button" class="v-btn" id="vNext" aria-label="下一首"><svg viewBox="0 0 24 24"><path d="M15.3 5.5h2.2v13h-2.2z M5.5 6.2v11.6L14.2 12z"></path></svg></button>
+      </div>
+      <div class="v-empty" id="vEmpty">车机上还没有在放的歌</div>
+    </div>
+  </section>
+
+  <div class="toast" id="toast"></div>
+</div>
+<!-- 调试宿主（debughost.js）：电脑上没有车机宿主时装一个模拟的 uiplus（提供媒体数据、播放控制、歌词） -->
+<script src="debughost.js"></script>
+<script src="data.js"></script>
+<script src="card.js"></script>
+</body>
+</html>
