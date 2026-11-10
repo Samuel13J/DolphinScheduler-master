@@ -156,11 +156,17 @@
       });
     })(0);
   }
+  function lyStop() {
+    if (lyAnim) { caf(lyAnim); lyAnim = 0; }
+    lyShown = null;
+  }
   function lyReset() {
+    lyStop();
     ly = { key: null, rows: [], idx: -1, hist: false, y: null };
     var b = $('vLy'); b.innerHTML = ''; b.style.transform = '';
   }
   function lyRows(texts) {
+    lyStop();
     var box = $('vLy');
     box.innerHTML = '';
     texts.forEach(function (t) { var p = document.createElement('p'); p.textContent = t; box.appendChild(p); });
@@ -198,16 +204,33 @@
     lyPlace(anim);
   }
 
+  var lyAnim = 0, lyShown = null;
+  var raf = window.requestAnimationFrame || function (fn) { return setTimeout(fn, 16); };
+  var caf = window.cancelAnimationFrame || clearTimeout;
   function lyPlace(anim) {
     var box = $('vLy'), p = box.children[ly.idx];
     if (!p) return;
     var portrait = portraitNow();
-    var y = Math.round($('vLyrics').clientHeight * (portrait ? 0.5 : 0.3) - (p.offsetTop + p.offsetHeight / 2));
-    if (y === ly.y) return;
-    if (!anim || ly.y === null) box.style.transition = 'none';
-    box.style.transform = 'translate3d(0,' + y + 'px,0)';
-    if (!anim || ly.y === null) { void box.offsetWidth; box.style.transition = ''; }
+    var y = Math.round($('vLyrics').clientHeight * (portrait ? 0.46 : 0.28) - (p.offsetTop + p.offsetHeight / 2));
+    var from = lyShown === null ? y : lyShown;
+    if (ly.y === y && lyShown === y) return;
     ly.y = y;
+    if (lyAnim) { caf(lyAnim); lyAnim = 0; }
+    if (!anim || from === y) {
+      lyShown = y;
+      box.style.transform = 'translate3d(0,' + y + 'px,0)';
+      return;
+    }
+    var t0 = Date.now(), dur = 460;
+    function frame() {
+      var k = (Date.now() - t0) / dur;
+      if (k > 1) k = 1;
+      var e = k * k * (3 - 2 * k);
+      lyShown = Math.round(from + (y - from) * e);
+      box.style.transform = 'translate3d(0,' + lyShown + 'px,0)';
+      lyAnim = k < 1 ? raf(frame) : 0;
+    }
+    frame();
   }
   function press(cmd) {
     if (!media) return;
@@ -314,6 +337,8 @@
     de.setProperty('--hit-day-2', rgbStr(tune(sec, Math.min(0.9, Math.max(0.45, sB)), 0.55)));
     de.setProperty('--ink-day', rgbStr(inkD));
     de.setProperty('--ink-day-2', rgbStr(inkD2));
+    de.setProperty('--hand-day', rgbStr(tune(rgb.a, Math.min(0.46, Math.max(0.22, sA * 0.55)), 0.10)));
+    de.setProperty('--hand-night', rgbStr(tune(rgb.a, Math.min(0.36, Math.max(0.16, sA * 0.4)), 0.4)));
     de.setProperty('--mute-day', 'rgba(' + inkD.join(',') + ',.58)');
     de.setProperty('--hit-night', rgbStr(tune(rgb.a, Math.min(0.96, Math.max(0.58, sA)), 0.78)));
     de.setProperty('--hit-night-2', rgbStr(tune(sec, Math.min(0.92, Math.max(0.52, sB)), 0.86)));

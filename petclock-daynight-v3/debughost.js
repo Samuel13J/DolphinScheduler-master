@@ -3,6 +3,89 @@
   'use strict';
   if (window.uiplus) return;
 
+  // 独立安装的车机应用会注入 AndroidClock。这时用真实媒体会话，不再播调试歌。
+  // 网页卡片宿主没有这个对象，下面的调试宿主照旧。
+  if (window.AndroidClock) {
+    var bridgeMedia = null, bridgeSubs = [], bridgeCars = [], bridgeSeq = 0, bridgeNight = 0, bridgeTimer = 0;
+    function bridgeNightVal() {
+      var mode = 'day';
+      try { mode = AndroidClock.nightMode() === 'night' ? 'night' : 'day'; } catch (e) {}
+      return mode === 'night' ? 32 : 16;
+    }
+    function bridgeEmitCar() {
+      var ev = { type: 'change', sequence: ++bridgeSeq, values: { 'display.dayNightMode': { status: 'ok', value: bridgeNight } } };
+      bridgeCars.forEach(function (s) { if (s.live) s.cb(ev); });
+    }
+    function bridgePull() {
+      var raw = '';
+      try { raw = AndroidClock.poll() || ''; } catch (e) { raw = ''; }
+      var m = null;
+      if (raw) { try { m = JSON.parse(raw); } catch (e2) { m = null; } }
+      if (!m || m.status !== 'ok') m = null;
+      var prev = bridgeMedia;
+      bridgeMedia = m;
+      var changed = !prev !== !m || !!(m && prev && (m.trackId !== prev.trackId || m.title !== prev.title || m.artist !== prev.artist || m.playing !== prev.playing || m.lyric !== prev.lyric || m.coverUrl !== prev.coverUrl));
+      if (changed) {
+        var ev = { type: 'change', sequence: ++bridgeSeq, values: { media: m || { status: 'empty', updatedAt: Date.now() } } };
+        bridgeSubs.forEach(function (s) { if (s.live) s.cb(ev); });
+      }
+      var nv = bridgeNightVal();
+      if (nv !== bridgeNight) { bridgeNight = nv; bridgeEmitCar(); }
+    }
+    function bridgeCmd(name) {
+      return function () { try { AndroidClock[name](); } catch (e) {} return Promise.resolve(); };
+    }
+    window.uiplus = {
+      version: '1.0',
+      ready: function () { return Promise.resolve(); },
+      getCapabilities: function () {
+        return Promise.resolve({
+          apiVersion: '1.0',
+          fields: [{ name: 'display.dayNightMode', subscriptionMode: 'native' }],
+          controls: ['play', 'pause', 'previous', 'next'],
+          actions: [],
+          systemFields: []
+        });
+      },
+      vehicle: {
+        subscribe: function (fields, cb) {
+          var s = { live: true, cb: cb };
+          bridgeCars.push(s);
+          bridgeNight = bridgeNightVal();
+          setTimeout(function () {
+            if (s.live) cb({ type: 'snapshot', sequence: ++bridgeSeq, values: { 'display.dayNightMode': { status: 'ok', value: bridgeNight } } });
+          }, 0);
+          return Promise.resolve({ unsubscribe: function () { s.live = false; } });
+        }
+      },
+      media: {
+        get: function () { bridgePull(); return Promise.resolve(bridgeMedia || { status: 'empty' }); },
+        subscribe: function (cb) {
+          var s = { live: true, cb: cb };
+          bridgeSubs.push(s);
+          if (!bridgeTimer) bridgeTimer = setInterval(bridgePull, 500);
+          setTimeout(function () {
+            bridgePull();
+            if (s.live) cb({ type: 'snapshot', sequence: ++bridgeSeq, values: { media: bridgeMedia || { status: 'empty', updatedAt: Date.now() } } });
+          }, 20);
+          return Promise.resolve({ unsubscribe: function () { s.live = false; } });
+        },
+        getLyrics: function () {
+          var raw = '', r = null;
+          try { raw = AndroidClock.lyrics() || ''; } catch (e) { raw = ''; }
+          if (raw) { try { r = JSON.parse(raw); } catch (e2) { r = null; } }
+          if (!r || !r.lines) r = { trackId: bridgeMedia && bridgeMedia.trackId, lines: [] };
+          return Promise.resolve(r);
+        },
+        play: bridgeCmd('play'),
+        pause: bridgeCmd('pause'),
+        previous: bridgeCmd('previous'),
+        next: bridgeCmd('next')
+      }
+    };
+    return;
+  }
+
   function own(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
 
   // ================= 调试歌：完整一首、带重复的副歌（看滚动歌词），一句 3.5 秒 =================

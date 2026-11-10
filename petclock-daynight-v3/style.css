@@ -53,9 +53,8 @@ html.landscape .clock-box { transform: translate(-50%, -25%); }
 .v-title { margin-top: .16rem; font-size: .46rem; font-weight: 700; line-height: 1.22; letter-spacing: .01em; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 .v-artist { margin-top: .1rem; font-size: .26rem; color: var(--mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.v-lyrics { position: absolute; left: 68%; right: .44rem; top: 2.9rem; bottom: 1.66rem; overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 18%, #000 70%, transparent 100%); }
-.v-ly { position: relative; padding-right: .3rem; transition: transform .85s cubic-bezier(.22, .61, .36, 1); will-change: transform; }
+.v-lyrics { position: absolute; left: 68%; right: .44rem; top: 2.9rem; bottom: 1.66rem; overflow: hidden; }
+.v-ly { position: relative; padding-right: .3rem; }
 .v-ly p { margin: 0 0 .18rem; font-size: .3rem; font-weight: 600; line-height: 1.45; color: var(--mute); opacity: .75; }
 .v-ly p.on { color: var(--ink); opacity: 1; }
 
@@ -80,10 +79,9 @@ html.landscape .clock-box { transform: translate(-50%, -25%); }
 .portrait .v-artist { margin-top: .08rem; font-size: .3rem; font-weight: 600; letter-spacing: .12em; color: var(--mute); }
 .portrait .v-meta::after { content: ""; display: block; width: 1.6rem; height: 1px; margin: .14rem auto 0;
   background: linear-gradient(90deg, transparent, var(--hit, #a4662e) 18%, var(--hit, #a4662e) 82%, transparent); }
-.portrait .v-lyrics { left: .36rem; right: .36rem; top: 58%; bottom: 1.42rem; height: auto; text-align: center;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%); }
+.portrait .v-lyrics { left: .36rem; right: .36rem; top: 58%; bottom: 1.42rem; height: auto; text-align: center; }
 .portrait .v-ly { padding: 0 .12rem; }
-.portrait .v-ly p { margin-bottom: .14rem; font-size: .36rem; font-weight: 600; letter-spacing: .02em; line-height: 1.45; opacity: .55; }
+.portrait .v-ly p { margin-bottom: .12rem; font-size: .3rem; font-weight: 600; letter-spacing: .02em; line-height: 1.45; opacity: .55; }
 .portrait .v-ly p.on { font-weight: 600; opacity: 1; }
 .portrait .v-ctl { left: 0; right: 0; bottom: .28rem; justify-content: center; }
 .portrait .v-btn { margin: 0 .14rem; }
@@ -139,7 +137,7 @@ html.landscape .clock-box { transform: translate(-50%, -25%); }
 
 /* ===== 昼夜模式（宿主 display.dayNightMode：16 白天 / 32 夜间） ===== */
 .pg-vinyl .bg, .pg-vinyl .ui, .clk .tnum, .clk .thour, .clk .tmin, .clk .tdate, .clock-box .dialframe,
-.v-btn, .v-btn.big, .v-title, .v-artist, .v-state, .v-ly p {
+.v-btn, .v-btn.big, .v-title, .v-artist, .v-state {
   transition: background-color .9s ease, color .9s ease, fill .9s ease, stroke .9s ease, filter .9s ease, border-color .9s ease;
 }
 
@@ -149,7 +147,8 @@ html.day .pg-vinyl .bg { background: var(--paper-1, #f7f3ec); }
 html.day .glow { filter: saturate(1.12); }
 html.day .pg-vinyl .ui { mix-blend-mode: normal; }
 html.day .clk .tnum { fill: var(--ink-day-2, #3f3a33); }
-html.day .clk .thour, html.day .clk .tmin { stroke: var(--ink-day, #23201c); }
+html.day .clk .thour, html.day .clk .tmin { stroke: var(--hand-day, #14110e); }
+html.night .clk .thour, html.night .clk .tmin { stroke: var(--hand-night, #8d8172); }
 html.day .clk .tdate { fill: var(--mute-day, #575146); }
 html.day .clock-box .dialframe { filter: none; -webkit-filter: none; }
 html.day .v-state::before { background: var(--hit, #ff8a2b); }
